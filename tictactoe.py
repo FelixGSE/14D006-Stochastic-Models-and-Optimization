@@ -32,6 +32,7 @@ class State(numpy.ndarray):
             out.append("\n")
         return str(" ").join(out)
         
+        
 class Learner:
     def __init__(s, player):
         s.valuefunc = dict()
@@ -42,56 +43,89 @@ class Learner:
         s.traced = False
        
     def enum_actions(s, state):
+        #enumerate all possible actions from given state
         res = list()
         for i in xrange(3):
             for j in xrange(3):
+                #if a given position in the given state
+                #is still empty then add it as a possible action 
                 if state[i,j] == 0:
                     res.append( (i,j) )
+        #return list of all possible actions
         return res
 
     def value(s, state, action):
         "Assumption: Game has not been won by other player"
+        #modify the state: put to the given place(action) the given symbol(player)
         state[action] = s.player
+        #hash value is an id used to compare disctionary keys quickly
+        #id of new state
         hashval = hash(state)
+        #access value of the new state
         val = s.valuefunc.get( hashval )
+        #if new state has no value yet
         if val == None:
+            #if new state is winning assign value 1
             if state.won(s.player): val = 1.0
+            #if new state is final but player did not win assign value 0
             elif state.full(): val = 0.0
+            #if none then assign 0.1??????
             else: val = 0.1
+            #assign value to the new state
             s.valuefunc[hashval] = val
+        #reset state to the old value (I guess we call "value" only for possible action, 
+        #meaning we step only to empty positions)    
         state[action] = 0
+        #return value of the new state
         return val
         
     def next_action(s, state):
         valuemap = list()
+        #enumerate over all possible actions
         for action in s.enum_actions(state):
+            #check value of the new state if you make a possible action
             val = s.value(state, action)
+            #add it to value map associated with the given action
             valuemap.append( (val, action) )
+        #Find the actions with the highest value
         valuemap.sort(key=lambda x:x[0], reverse=True)
         maxval = valuemap[0][0]
         valuemap = filter(lambda x: x[0] >= maxval, valuemap)
-        
+        #randomize over the max value actions and return one of them 
         return sample(valuemap,1)[0]
 
     def next(s, state):
+        #If the other player won assign value -1
         if state.won(3-s.player):
             val = -1
+        #If the game ended assign value 0.1
         elif state.full():
             val = -0.1
         else:
+            #Otherwise find the best action with the associated value
             (val, action) = s.next_action(state)
+            #Redefine state according to this action (put the given 
+            #player`s sign to the optimal action)
             state[action] = s.player
 
         if state.won(1) or state.won(2) or state.full():
+            #If game is finish change traced value to true
             s.traced = True
             
         #learning step
+        #If there was a previous state
         if s.laststate_hash != None:
+            #update the value of the previous state (meaning the state you were in the previous step) 
+            #based on the original value of the previous state and the value of the new state
             s.valuefunc[s.laststate_hash] = (1.0-s.alpha) * s.valuefunc[s.laststate_hash] + s.alpha * val
+        #update laststate value
         s.laststate_hash = hash(state)
+        #append previous state to the game history
         s.gamehist.append(s.laststate_hash)
         
     def reset(s):
+        #reset the class except valuefunction
+        #basically start new game but keep values you already updated
         s.laststate_hash = None
         s.gamehist = []
         s.traced = False
