@@ -97,20 +97,23 @@ class Learner:
         s.traced = False
                         
 class Game:
+    #description of the game = the variable 
+    # what objects it should have inside
     def __init__(s):
-        s.learner = Learner(player=2)
-        s.reset()
-        s.sp = Selfplay(s.learner)
-        
+        s.learner = Learner(player=2) #define if we want a second player 
+        s.reset() #define that reset is part of the game 
+        s.sp = Selfplay(s.learner) #if we want to play against myself
+    
+    #define the reset function    
     def reset(s):
-        s.state = State()
-        s.learner.reset()
+        s.state = State() 
+        s.learner.reset() 
         print "** New Game **"
         print s.state
 
-    def __call__(s, pi,pj):
-        j = pi -1
-        i = pj - 1
+    def __call__(s, pi,pj): 
+        j = pi -1 #take the first coordinate of the previous state
+        i = pj - 1 #take the second coordinate of the previous state
         if s.state[j,i] == 0:
             s.state[j,i] = 1
             s.learner.next(s.state)
@@ -125,20 +128,22 @@ class Game:
                 print "You LOOSE"
             else:
                 print "DRAW Game"
-            s.reset()
+            s.reset() #reset the game 
 
     def selfplay(s, n=1000):
+        #selfplay for specific number of rounds, 1000 is the default number 
         for i in xrange(n):
-            s.sp.play()
-        s.reset()
-
+            s.sp.play() 
+        s.reset() #in the end reset again
+#use the package cPicle to save the dictionary 
     def save(s):
-        cPickle.dump(s.learner, open("learn.dat", "w"))
-
+        cPickle.dump(s.learner, open("learn.dat", "w")) #open is for the appointing the name file 
+        # w = write, we can even add wb so that it is portable between Windows and Unix 
+#use the package cPicle to load the dictionary 
     def load(s):
-        s.learner = cPickle.load( open("learn.dat") )
-        s.sp = Selfplay(s.learner)
-        s.reset()
+        s.learner = cPickle.load( open("learn.dat") ) #read the dictionary
+        s.sp = Selfplay(s.learner) #selfplay using that dictionary 
+        s.reset() # reset at the end
              
 class Selfplay:
     def __init__(s, learner = None):
