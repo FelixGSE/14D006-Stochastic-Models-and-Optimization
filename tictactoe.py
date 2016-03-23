@@ -180,32 +180,49 @@ class Game:
         s.reset() # reset at the end
              
 class Selfplay:
+
     def __init__(s, learner = None):
+        # No learner argument --> Create Learner Class for Player 2 
         if learner == None:
             s.learner = Learner(player=2)
+        # If learner class is passed assign it to learner object   
         else:
             s.learner = learner
+
+        # Create oponent player 
         s.other = Learner(player=1)
+        # Set counter to zero
         s.i = 0
 
     def reset(s):
+        # Create state class
         s.state = State()
+        # Reset both players 
         s.learner.reset()
         s.other.reset()
 
+    # Play the mo#!%*** game
     def play(s):
+        # Initliaze states and players
         s.reset()
+
         while True:
+            # Update states of both players 
             s.other.next(s.state)    
             s.learner.next(s.state)
+
+            # Check if board is full or if player 1 or 2 won 
             if s.state.full() or s.state.won(1) or s.state.won(2):
+                # FALSE: Update counter
                 s.i += 1
+                # In every 100th iteration print the current state
                 if s.i % 100 == 0:
                     print s.state #hash(s.state)
-                    
+                # If game is not finish do the the optimised next step
                 if not s.other.traced:
                     s.other.next(s.state)
                 break
+
 
 if __name__ == "__main__":
     print "Tic tac toe - Place game piece using notation g(i,j), i being the row and j being the column"
