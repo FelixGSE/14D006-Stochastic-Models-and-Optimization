@@ -1,5 +1,7 @@
 import numpy
 from random import sample
+import random
+import numpy as np
 from numpy import diag
 import cPickle
 
