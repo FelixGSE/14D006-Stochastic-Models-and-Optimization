@@ -44,7 +44,6 @@ class Learner:
         s.traced = False
         
         # I did something here
-        s.hv = [] 
         if player == 1:
             if alpha == None: 
                 s.alpha = 0.2 
@@ -82,11 +81,6 @@ class Learner:
         hashval = hash(state)
         #access value of the new state
         val = s.valuefunc.get( hashval )
-
-        # I did something here
-        if hashval == 5:
-            s.hv.append(val)
-        # I did something here
 
         #if new state has no value yet
         if val == None:
@@ -127,7 +121,7 @@ class Learner:
         #randomize over the max value actions and return one of them 
         opt = sample(valuemap,1)[0]
 
-        split = np.random.choice(2, 1, p=[s.epsilon, 1-s.epsilon]).tolist()[0]
+        split = np.random.choice(2, 1, p=[1-s.epsilon, s.epsilon]).tolist()[0]
         if split == 1:
             return rc
         else:
@@ -249,6 +243,7 @@ class Selfplay:
 
         # MY STUFF
         s.wining = []
+        s.valuesave = dict()
 
 
     def reset(s):
@@ -284,18 +279,10 @@ class Selfplay:
                 if s.state.won(1): s.wining.append(1)
                 elif s.state.won(2): s.wining.append(2)
                 else: s.wining.append(0)
+                for i in [2,6,18,162]:
+                    s.other.valuefunc
+                    if s.valuesave.get(i) == None: s.valuesave[i] = [s.other.valuefunc[i]]
+                    else: s.valuesave[i].append(s.other.valuefunc[i])
                 
                 break
-
-
-if __name__ == "__main__":
-    print "*** CHALLENGE THE BEST TIC TAC TOE PLAYER ***"
-    print "PLAY USING g(i,j), WHERE i IS A ROW AND j A COLUMN"
-    print "WRITE g.selfplay(1000) TO MAKE ME 1000 TIMES STRONGER"
-    g = Game()
-
-# def __init__(s, player, alpha = None, epsilon = None):
-p1 = Learner(player = 1, alpha = 0.5,epsilon = 0.3)
-p2 = Learner(player = 2, alpha = 0.5,epsilon = 0.3)
-g2 = Game(learner = p1,other=p2)
 
