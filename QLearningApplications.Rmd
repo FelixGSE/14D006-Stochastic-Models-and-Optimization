@@ -114,6 +114,20 @@ The class **Selfplay** creates the oponent player and make two AIs play against 
 
 While playing the game, the human user is allowed to train the AI with N games with the function g.selfplay(N), where N is a natural number. To play the game call the function g(i,j) which enable you to position your mark on the tic-tac-toe board - i is the row and j is the column.
 
+# TO BE DETERMINED
+
+In the following we describe the learning behaviour of the two player classes according to changes in parameters. 
+
+In order to study the behaviour of the learning rate we let two robot players play against each other for different values of alpha. We observe the wining and draw rates for an increasing number of training games. Both player have the same learning parameter. We exclude random choices and let both players decide optimally in a greedy way. 
+
+PLOTS PLOTS PLOTS
+
+Plot XXX to YYY depict the outcome of games as a function of the number of training games. In general we can observe that the number of shares of draws is increasing for an increasing number of games. For lower learning rates the share of draw games is increasing faster. In all cases the winning share of game opening player is constantly higher, which makes sense since he has a slight advantage. Furthermore, the development for higher levels of alpha is less volatile. 
+
+PLOTS PLOTS PLOTS
+
+For the randomisation we follow basically the same procedure. We set the learning rate to 0.8 and repeat the procedure for different values of $\epsilon$. Plot ZZZ to AAA shows the development for different levels of randomisation. We can basically observe two remarkable things. For both high learning and randomisation rates, the game comes to an equilibrium fast. This could be explained that state space is explored more quickly
+
 #Q-learning applications review
 
 ##Classical Q-learning
