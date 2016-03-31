@@ -4,6 +4,10 @@ import random
 import numpy as np
 from numpy import diag
 import cPickle
+from pygame import mixer 
+import time
+import warnings
+warnings.filterwarnings("ignore")
 
 class State(numpy.ndarray):
     symbols = {0: "_", 1: "X", 2: "O"}
@@ -36,30 +40,20 @@ class State(numpy.ndarray):
         
         
 class Learner:
-    def __init__(s, player, alpha = None, epsilon = None):
+    def __init__(s, player):
         s.valuefunc = dict()
         s.laststate_hash = None
         s.player = player
         s.gamehist = []
         s.traced = False
-        
         # I did something here
         s.hv = [] 
         if player == 1:
-            if alpha == None: 
-                s.alpha = 0.2 
-            else: 
-                s.alpha = alpha
-            if epsilon == None: 
-                s.epsilon = 0.5 
-            else: s.epsilon = epsilon
+            s.alpha = 0.9
+            s.gamma = 0.8
         else: 
-            if alpha == None: 
-                s.alpha = 0.4 
-            else: s.alpha = alpha
-            if epsilon == None: 
-                s.epsilon = 0.7 
-            else: s.epsilon = epsilon
+            s.alpha = 0.9
+            s.gamma = 0.8
        
     def enum_actions(s, state):
         #enumerate all possible actions from given state
@@ -127,7 +121,7 @@ class Learner:
         #randomize over the max value actions and return one of them 
         opt = sample(valuemap,1)[0]
 
-        split = np.random.choice(2, 1, p=[s.epsilon, 1-s.epsilon]).tolist()[0]
+        split = np.random.choice(2, 1, p=[s.gamma, 1-s.gamma]).tolist()[0]
         if split == 1:
             return rc
         else:
@@ -172,19 +166,10 @@ class Learner:
 class Game:
     #description of the game = the variable 
     #what objects it should have inside
-
-    # FELIX ALSO DESTROYED SOMETHING HERE
-    def __init__(s, learner = None , other = None ):
-        if learner == None: 
-            s.learner = Learner(player=2) #define if we want a second player 
-        else:
-            s.learner = learner
-        if other == None:
-            s.other = Learner(player=1)
-        else:
-            s.other = other
+    def __init__(s):
+        s.learner = Learner(player=2) #define if we want a second player 
         s.reset() #define that reset is part of the game 
-        s.sp = Selfplay(learner = s.learner,other = s.other) #if we want self learning
+        s.sp = Selfplay(s.learner) #if we want self learning
     
     #define the reset function    
     def reset(s):
@@ -192,6 +177,9 @@ class Game:
         s.learner.reset() 
         print sample(["WELCOME TO YOUR NIGHTMARE", "DID YOU KNOW I BEAT THE BEST NORTH KOREAN PLAYER?", "YOU CANNOT BEAT THE TICTACTOE MASTER"], 1)
         print s.state
+        mixer.init()
+        mixer.music.load('/Users/Thomas/Downloads/-loops-of-fury-by-the-chemical-brothers.mid')
+        mixer.music.play()
 
     def __call__(s, pi,pj): 
         j = pi -1 #take the first coordinate of the previous state
@@ -205,11 +193,62 @@ class Game:
 
         if s.state.full() or s.state.won(1) or s.state.won(2):
             if s.state.won(1):
+                print '|       ::::::::::::;      |'
+                print '|      ;:.;:-%/%;;;::;     |'
+                print '|      ;%:;:;::;:;:;/:.    |'
+                print '|      :/  `%~    :\%::.   |'
+                print '|     ://\_     ___:%:::.  |'
+                print '|     | ___     ___.::%=:  |'
+                print '|     )|// |===|// | :\.;  |'
+                print '|     :\___/  |\___/ ::\;  |'
+                print '|     :    / ::     ::v:;  |'
+                print '|     `.  (_.=:.` /:.:::;  |'
+                print '|      `./  ::  \  :: :::; |'
+                print '|       (  ____     :::;;  |'
+                print '|       | [    ]  _/.|;:;; |'
+                print '|      ;:\ .~~   / .::.:;; |'
+                print '|         x---:. .::_.\    |'
+                print '|      _./ `-._.:.~   :.   |'
+                print '| _.-.~  \           ./ \. |'
+                print '|~        `-._____.-/     \|'
+                print '|                          |'
+                print '|           WINNER         |'
+                print '|__________________________|' 
                 print sample(["YOU WERE LUCKY", "NEXT TIME... IT'S ME!", "HUMAN, YOU WIN..."], 1)
+                mixer.init()
+                mixer.music.load('/Users/Thomas/Downloads/mmxmavin.mid')
+                mixer.music.play()
+                time.sleep(6)
             elif s.state.won(2):
+                print '|  \\                             |'
+                print '|   \\_           __--__          |'
+                print '|    X:\        (#/  \#)         |'
+                print '|    \::\       ( |||| )         |'
+                print '|     \::\       \||||/          |'
+                print '|    /X:::\   .-./.-. \.--.      |'
+                print '|    \\/\::\ / /      (    l      |'
+                print '|     ~\ \::\ /  |    ..   L.    |'
+                print '|       \/:::|__/ \____ \..  \   |'
+                print '|       /:/\:|   |       (    \. |'
+                print '|       \/.-...  |        >    ) |'
+                print '|              \ |      //  .-/  |'
+                print '|               |      /(  ./    |'
+                print '|               \-...-/_ \  \    |'
+                print '|               __||/_ \  .-.    |'
+                print '|              / _ \ #  |        |'
+                print '|             |  #  |#  |        |'
+                print '|             |  #  |#  |        |'
+                print '|                                |'
+                print '|             WINNER             |'
+                print '|________________________________|' 
                 print sample(["I WIN HAHAHA!", "YO IS THIS GAME TOO HARD FOR YOU?", "ROBOTS WILL MAKE YOU UNEMPLOYED"], 1)
+                mixer.init()
+                mixer.music.load('/Users/Thomas/Downloads/LFMGH-111VoiceOfArk.mid')
+                mixer.music.play()
+                time.sleep(6)
             else:
                 print "DRAW"
+                time.sleep(2)
             s.reset() #reset the game 
 
     def selfplay(s, n=1000):
@@ -228,22 +267,17 @@ class Game:
         s.reset() # reset at the end
              
 class Selfplay:
-    
-    # FELIX WAS HERE AGAIN
-    
-    def __init__(s, learner = None, other = None ):
+
+    def __init__(s, learner = None):
         # No learner argument --> Create Learner Class for Player 2 
         if learner == None:
             s.learner = Learner(player=2)
         # If learner class is passed assign it to learner object   
         else:
             s.learner = learner
-        
-        if other == None:
+
         # Create oponent player 
-            s.other = Learner(player=1)
-        else: 
-            s.other = other
+        s.other = Learner(player=1)
         # Set counter to zero
         s.i = 0
 
@@ -289,13 +323,38 @@ class Selfplay:
 
 
 if __name__ == "__main__":
-    print "*** CHALLENGE THE BEST TIC TAC TOE PLAYER ***"
+    print ""
+    print'     |  ___\ \ / /_   _| ___ \  ___|  \/  ||  ___|'         
+    print'     | |__  \ V /  | | | |_/ / |__ | .  . || |__  '         
+    print'     |  __| /   \  | | |    /|  __|| |\/| ||  __| '        
+    print'     | |___/ /^\ \ | | | |\ \| |___| |  | || |___ '        
+    print'     \____/\/   \/ \_/ \_| \_\____/\_|  |_/\____/ '
+    print "                     __________"
+    print "              ______/ ________ \______"
+    print "            _/      ____________      \_"
+    print "           _/____________    ____________\_"
+    print "         /  ___________ \  / ___________  \ "
+    print "        /  /XXXXXXXXXXX\ \/ /XXXXXXXXXXX\  \ "
+    print "       /  /############/    \############\  \ "
+    print "       |  \XXXXXXXXXXX/ _  _ \XXXXXXXXXXX/  |"
+    print "     __|\_____   ___   /o  o\   ___   _____/|__"
+    print "     [_       \     \  X    X  /     /       _]"
+    print "     __|     \ \                    / /     |__"
+    print "     [____  \ \ \   ____________   / / /  ____]"
+    print "          \  \ \ \/||.||.||.||.||\/ / /  /"
+    print "           \_ \ \  ||.||.||.||.||  / / _/"
+    print "             \ \   ||.||.||.||.||   / /"
+    print "              \_   ||_||_||_||_||   _/"
+    print "                \     ........     /"
+    print "                 \________________/"
+    print ""
+    print'|_   _|_   _/  __ \_   _/ _ \/  __ \_   _|  _  |  ___|'
+    print'  | |   | | | /  \/ | |/ /_\ \ /  \/ | | | | | | |__  '
+    print'  | |   | | | |     | ||  _  | |     | | | | | |  __| '
+    print'  | |  _| |_| \__/\ | || | | | \__/\ | | \ \_/ / |___ '
+    print'  \_/  \___/ \____/ \_/\_| |_/\____/ \_/  \___/\____/ '
+    print ""
     print "PLAY USING g(i,j), WHERE i IS A ROW AND j A COLUMN"
     print "WRITE g.selfplay(1000) TO MAKE ME 1000 TIMES STRONGER"
+    print ""
     g = Game()
-
-# def __init__(s, player, alpha = None, epsilon = None):
-p1 = Learner(player = 1, alpha = 0.5,epsilon = 0.3)
-p2 = Learner(player = 2, alpha = 0.5,epsilon = 0.3)
-g2 = Game(learner = p1,other=p2)
-
