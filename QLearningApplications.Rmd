@@ -1,5 +1,5 @@
 #Functioning of the code
-This section describes the code contained in the Appendix. This code is largely based on the implementation of the Innohead team^[sites.google.com/a/innohead.com/wiki/Home/Python/reinforcement-learning---tic-tac-toe]. Although, we adjusted some parameters and added others to augment the depth of our experimental analysis. We also enhanced the GUI.
+This section describes the code contained in the Appendix. This code is largely based on the implementation of the (Innohead team)[sites.google.com/a/innohead.com/wiki/Home/Python/reinforcement-learning---tic-tac-toe]. Although, we adjusted some parameters and added others to augment the depth of our experimental analysis. We also enhanced the GUI.
 
 The general structure of the code is organized around classes. These are Python structure containing functions and objects that can belong to the class' environement or to the global environment.
 
