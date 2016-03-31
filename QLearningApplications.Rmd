@@ -85,7 +85,7 @@ $$+ \gamma^2r_{t+2}(s_{t+2}, argmax_{a_{t+2}} Q(s_{t+1}, a_{t+2}), s_{t+3}) + â€
 If we want to maximize this equation, we can transform the problem, we will look for argmax $Q$, $Q*$ (Watkins, 1989; Watkins and Dayan, 1992). This approach finds $Q*$ iteratively through a forward dynamic model.   
 $Q*(s,a) = r + \gamma max_{\alpha}[Q(s,a)]$, which is done in $\alpha$ proportion. Therefore, convergence is guaranteed with probability 1.
 
-# Tic-Tac_toe Game in the RL Sense
+# Tic-Tac-Toe Game in the RL Framework
 The game:
   - 2 players (X and O player)
   - 3-by-3 board
@@ -96,7 +96,7 @@ We approach the game by using reinforcement learning method with value function 
   - the state **s**: a given position of marks in the table
   - the value function **$V(s)$**: for each possible state of the game is taken the estimated probability of winning (We initialized at 0.5)
   - The **$Q$** value function - make greedy moves, in each state make a move which results in the highest value state in the next step
-	- exploration: with some probability (parameter \epsilon) make exploratory moves
+  - exploration: with some probability (parameter \epsilon) make exploratory moves
   
 #Functioning of the code
 This section describes the code contained in the Appendix. The code is largely based on the implementation of the [Innohead team](sites.google.com/a/innohead.com/wiki/Home/Python/reinforcement-learning---tic-tac-toe0). Though, we adjusted some parameters and added others to augment the depth of our experimental analysis. ALso we enhanced the GUI (graphical user interface).
