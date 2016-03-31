@@ -36,7 +36,7 @@ class State(numpy.ndarray):
         
         
 class Learner:
-    def __init__(s, player, alpha = None, gamma = None):
+    def __init__(s, player, alpha = None, epsilon = None):
         s.valuefunc = dict()
         s.laststate_hash = None
         s.player = player
@@ -50,16 +50,16 @@ class Learner:
                 s.alpha = 0.2 
             else: 
                 s.alpha = alpha
-            if gamma == None: 
-                s.gamma = 0.5 
-            else: s.gamma = gamma
+            if epsilon == None: 
+                s.epsilon = 0.5 
+            else: s.epsilon = epsilon
         else: 
             if alpha == None: 
                 s.alpha = 0.4 
             else: s.alpha = alpha
-            if gamma == None: 
-                s.gamma = 0.7 
-            else: s.gamma = gamma
+            if epsilon == None: 
+                s.epsilon = 0.7 
+            else: s.epsilon = epsilon
        
     def enum_actions(s, state):
         #enumerate all possible actions from given state
@@ -127,7 +127,7 @@ class Learner:
         #randomize over the max value actions and return one of them 
         opt = sample(valuemap,1)[0]
 
-        split = np.random.choice(2, 1, p=[s.gamma, 1-s.gamma]).tolist()[0]
+        split = np.random.choice(2, 1, p=[s.epsilon, 1-s.epsilon]).tolist()[0]
         if split == 1:
             return rc
         else:
@@ -294,8 +294,8 @@ if __name__ == "__main__":
     print "WRITE g.selfplay(1000) TO MAKE ME 1000 TIMES STRONGER"
     g = Game()
 
-# def __init__(s, player, alpha = None, gamma = None):
-p1 = Learner(player = 1, alpha = 0.5,gamma = 0.3)
-p2 = Learner(player = 2, alpha = 0.5,gamma = 0.3)
+# def __init__(s, player, alpha = None, epsilon = None):
+p1 = Learner(player = 1, alpha = 0.5,epsilon = 0.3)
+p2 = Learner(player = 2, alpha = 0.5,epsilon = 0.3)
 g2 = Game(learner = p1,other=p2)
 
