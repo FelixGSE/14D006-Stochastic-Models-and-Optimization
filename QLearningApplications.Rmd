@@ -1,0 +1,54 @@
+---
+title: "TOTOTOTOTOTO"
+output: pdf_document
+---
+
+#Functioning of the code
+This section describes the code contained in the Appendix. This code is largely based on the implementation of the Innohead team^[sites.google.com/a/innohead.com/wiki/Home/Python/reinforcement-learning---tic-tac-toe]. Although, we adjusted some parameters and added others to augment the depth of our experimental analysis.
+
+The general structure of the code is organized around classes. These are Python objects containing functions and objects that can belong to the class' environement or to the global environment.
+
+The class State is creating the actual game board with values as they are displayed (_, X, and O) and the corresponding values that are recognized by the learner algorithm (No Play, Player 1, Player 2). For this, it takes as input the current actions of the players to fill the table. It also contains the functions returning whether one of the players won the game and if the board is full. 
+
+The class Learner contains the function enumerating the possible actions left available for a player at a given state. It also contains the function evaluating the value of a particular state. In particular, the value of a win is 1, a loss is 0, and an intermediate state is 0.1. The function next_action is pivotal as it determines what will be the next move of the AI. The next move will correspond to the action which, according to past experience, has the highest value. Compared to the original code, we added the a parameter allowing for more or less randomness is this decision process. Another function will be computing the value of the previous state after evaluating the result of the last action. This corresponds to the "classical" Q-learning iteration:
+$$value(lastState) = (1-\alpha)intermediateValue(lastState) + \alpha value(newState)$$
+
+The class Game helps displaying correctly ther information for the human player. This is also where we choose to let the AI to train against itself and for how many games. This class is also in charge of recording where the players choose to play.
+
+The class Selfplay creates the oponent player and make two AIs play against each other. The aim is to prepare the AI to play (well) against a human player. We also use this class to evaluate how an AI is performing and how its sequences of actions are converging with different sets of parameters. We discuss that in the next section.
+
+#Q-learning applications review
+
+##Classical Q-learning
+We present similar replica of the Q-learning algorithm for the other applications in this section.
+
+###Pacman
+The Pacman AI describes a state using a vector of features. Features are functions from states to real numbers (often 0/1) that capture important properties of the state: distance to closest ghost, distance to closest dot, number of ghosts, $1/(distance to dot)^2$, is Pacman in a tunnel? (0/1).
+
+This information is used to find which actions usually result in good outcomes, and which result in bad. So if in the current state there is a food pellet above the AI, and the AI moves up to eat the food pellet, it will remember that, in this state, moving up was a good decision because its score increased. The game is played repeatedly to build a table of memories. 
+
+###Financial trading
+It is possible to automatically evaluate the best course of A action amoung buy, sell, and stay out. This is done from experience and without knowing the environment in advance. Here, different value functions can be optimized: internal profit, sharp  ratio,  derivative  sharp  ratio. The selection of a particular one is important to achieve a stable learning algorithm in the value iteration, especially applied when the environement is unstable. Also, learning in parallel the environment's variables variance is reported by Du et al. (2009) to lead to better performance in the algorithm than that with stationary and fixed value functions. 
+
+###Intelligent anti-tank mines
+Mine-carying robots have been designed with sensors determining the location of enemy tanks within a certain radius so they compute the object's direction and velocity. Based on these computations, two perceptual triggers are initialized: CAN_INTERCEPT and NEAR. If CAN_INTERCEPT is TRUE, the robot chooses the action intercept. If NEAR is TRUE, it chooses the action terminate. Otherwise it chooses to wait. The robot is rewarded if a tank is destroyed after a termination action. The perceptual triggers are reevaluated accordingly to the history of rewards. 
+
+##Q-learning with approximations
+Q-learning might loose viability with increasing sizes of state or action space of the monitored system. It is possible to use function approximations to allow working in infinite state spaces and speed up learning in finite state spaces.
+
+###Backgammon
+Artificial neural networks as a function approximator are a way to deal with this challenge. They are implemented in Tesauro's Backgammon player using temporal difference learning, an unsupervised technique in which the learning agent learns to predict the expected value of a variable occurring at the end of a sequence of states. It is useful for backgammon, a non-deterministic game with smooth and continuous state space where similar board positions have similar values. In deterministic games, such as chess, a small difference in board position can have large consequences for the state value. 
+
+###Deepmind
+A recent application by Google DeepMind merged Q-learning with deep learning, titled "deep reinforcement learning" or "deep Q-networks", has been successful at playing some Atari 2600 games at expert human levels. 
+
+It uses a deep Q-network, that, mimicking humans, can learn successful policies directly from high-dimensional sensory inputs using end-to-end reinforcement learning. For this, for each round, the network has as many loss functions as there are potential actions to reach the objective state. To avoid getting stuck in loops and/or local minima, the loss functions are evaluated as the averaged value of different (and not always optimal in a greedy perspective) tries.
+
+The deep Q-network agent, actually receiving only the pixels and the game score as inputs, was able to surpass the performance of all previous algorithms and achieve a level comparable to that of a professional human tester across a set of 49 games, using the same algorithm, network architecture and hyperparameters. 
+
+#References
+http://cs229.stanford.edu/proj2009/LvDuZhai.pdf
+
+http://www.cc.gatech.edu/ai/robot-lab/online-publications/iros02-ebeowulf-saho-arkin.pdf
+
+http://www.readcube.com/articles/10.1038%2Fnature14236
