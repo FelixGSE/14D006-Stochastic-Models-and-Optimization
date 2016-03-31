@@ -1,3 +1,86 @@
+---
+title: "Tic-tac-toe robot player"
+author: "Felix Gutmann, Thomas Vicente, Zsuzsa Holler and Denitsa Panova"
+output: pdf_document
+---
+
+>_“If we choose to call the Chess-Player a pure machine we must be prepared to 
+>admit that it is, beyond all comparison, the most wonderful of the inventions of mankind.”_
+>Edgar Allan Poe
+
+We have strived to create artificial intelligence (AI) long before we actually had the computing power to do so. Since then, we managed to break almost all such computing boundaries. We have witnessed a lot of algorithms which question which ideas are in the realm of science fiction and which are actually achievable in the near future. The latest accomplishment is the Google AI which beats one of the top GO players in the world, a task long considered impossible. 
+
+In this paper we concentrate on one of the main technique used to create AIs, reinforcement learning (RL) and more specifically Q-learning. This variation is using exactly the principles of Dynamic Programing (DP). We will focus on its applications for board games. The latter are interesting as they represent a measure for the ability to implement abstract thinking. They provide a good illustration of artificial intelligence in the context of evolution and learning form ups and downs. So it is only fair to ask if computers can be up to the challenge. Although for humans it is natural to learn to master games, the architecture of machines makes them unable to learn with the same flexibility, until recently. There are many computational methods which have been created in order to “teach” the AI how to play successfully. 
+
+In order to elaborate more on the topic we focus on RL and its implementation to the classical tic-tac-toe game. The latter has been around for three and half millennia and nowadays it is typically popular among kids. On 3 by 3 board players alternate terns to put either X or O. A player wins if there is either row, column or diagonal filled with her symbol. 
+
+#Reinforcement Learning 
+
+Machine learning's aim may be to create intelligent entities called agents. Reinforcement Learning (RL) is the sub-field specialized in this area. To make a parallel with supervised learning (SL), we can say the agent in SL is taught how to react in a given situation from experience. In RL, there is a room for randomness in the choice of the next step. When the action is completed, the agent is told if it has been a good or bad decision by providing negaive or positive reward. It learns how he should act in the future based on that constant learning. Put in other words, the agent is learning from interacting with its environment and observing what is the outcome of this interaction. However, the agent is not told if his action is good or bad immediately after it has been made. The reward comes after several additional steps. This leads to the so-called “temporal credit assignment problem”: how to decide which step contributes the most to the success of a game, as the agent does series of decisions before getting the reward. We deal this problem using RL and especially temporal difference learning. We will elaborate more on the topic later on.
+
+##Reasoning 
+The reasoning for RL is simple. Imagine playing the game. Adults use analyze the current situation and use their experience to deduce which is the next best step. Young children use experience to a much lesser extent. They mostly use the trail-error approach. This is exactly what RL does. When children play they record the success of a specific action. They will repeat the better actions more often. However, they might fail to consider their their oponent's move. By playing a lot the kid or the agent learns to consider this and gets a better "cause and effect" idea of the game. The resulting RL algorithm is as follows:  
+
+1. Agent observes the state (each state is a decision)  
+2. An action is undertaken by a decision policy (a function which defines agent's action in a given state)  
+3. The agent receives a scalar reward or reinforcement - a function of state and action (the agent maximizes total reward over a long horizon)  
+4. Information about the reward in the particular state is recorded  
+
+If the game is player long enough, the agent will have enough information to perform perfectly in the environment.    
+
+##Exploitation vs Exploration
+A crucial trade-off in RL is to choose between exploitation and exploration. If the agent has performed a specific action in the past and has received a positive reward, then most likely he will prefer it in case it is an option again: exploitation of the acquired knowledge. However, this prevents the algorithm from finding new paths which could possibly be better rewarded. Thus we need to some extent exploration of new information. The most common way to achieve a good balance between these two aspects is to partially randomize in order not to get stuck in a local optima.
+
+##Value Function
+The value functions are the key to solve the “temporal credit assignment problem” which we have discussed previously. They depend on the state-action pair which estimates how good a particular action will be in a given state, or what the return for that action is expected to be. The value functions indicate the long-run premium in contrast to the reward which is the immediate gain of an action. The following notations are used: $s$ for state, $\pi$ for policy, $V_\pi(s)$ for **value** $s$ and $\pi$, and $Q_\pi(s,a)$ for **expected reward** if we undertake action $a$ and if we are at state $s$ and have policy $\pi$.  
+
+Now we need to know how to estimate those value functions in order to understand which is the best reward and consequently which is the best action to take.  
+
+##Temporal Difference Learning
+Temporal Difference learning (TD) is one of the possible ways to estimate the best actions to take. It is a combination of Monte Carlo ideas and DP ideas. Its Monte Carlo aspect is that the algorithm learns by sampling the environment according to a policy, and the DP side is corresponding to approximating the current estimate by previously learned estimates. There are two types of TD based on when the reward is estimated: at the end of the game or at each state. 
+
+**Estimating at each state:** $V(s_t) = V(s_t) + \alpha [r_{t+1} +\gamma V(s_t+1) -V(s_t)]$
+
+**Estimating at the final stage:** $V(s_t) = V(s_t) + \alpha [V(s_{t+1}) - V(s_t)]$    
+
+where $s_t$ is the current stage;   
+$s_t+1$ is the next stage;   
+$\alpha$ is the learning rate, a number between 0 and 1 which shows the extent to which the newly acquired information will override the old information;  
+$\gamma$ is the discount rate, giving the importance of future rewards, representing idea that future rewards worth less than the current ones;  
+$r_{t+1}$ is the observed reward at time t+1
+
+Since the game we have chosen is tic-tac-toe, where one receives a reward at the end of the game, we concentrate on the the latter.  
+
+###On vs Off-Policy
+The On-Policy is used to learn the **value of a particular policy**. The update is done by values of the same policy. The policies are usually “soft”, meaning that they ensure exploration of the game's possibilities. This is done by making the algorithm chooses random action (not a greedy-reward-optimizing one) with probability epsilon. 
+The Off-Policy learns different policies in order to **evaluate behavior and value estimation.** Again the policies should be “soft” in order to promote exploration. Note that in the On-Policy method the update of the estimated value is done strictly based on **experience**, whereas in the Off-Policy approach, hypothetical actions are also used. This means that an agent trained by an off-policy method may end up learning strategies that it has not necessarily seen during the learning phase.
+
+##Q-learning
+Q-learning is a type of Off-Policy TD method. It is a model-free approach to find the $Q$ value function. It can be proven that given sufficiently “soft” policies, it converges with probability 1 to an action-state value function for an arbitrary policy when the following criteria are met: each action is executed in each state an infinite number of times, $\alpha$ is decreased with an appropriate schedule and action-values are stored perfectly.
+
+Moreover, if this approach is used, it is guaranteed that the optimal policy is reached even when actions are selected according to a very exploratory policy.   
+
+The algorithm works in the following manner:  
+
+1. Observe the current state, $s$.  
+2. Choose an action, $a$, for the particular state based on one of the policies   
+3. Take the action, and observe the reward, $r$, as well as the new state, $s'$.  
+4. Update the Q-value for the state using the observed reward and the maximum reward possible for the next state. 
+
+Updates are done in the following way:  
+$$Q(s,a) =  Q(s,a) + \alpha(r + \gamma max_{\alpha}[Q(s',a')-Q(s,a)]$$   
+where $\alpha$ is the learning rate, $\gamma$ is the discount factor and $max_{\alpha}$ is the maximum reward in the following state.   
+5. Set the state to the new state, and repeat the process until a terminal state is reached.  
+For the tic-tac-toe game, we do not have a reward for every action. Therefore, the value functions coincide. 
+
+##Q-learning as a DP Algorithm 
+We know that the $Q$ value function of each action in a particular state can be expressed as a sum of the rewards of an action in the particular state plus the expected future of the rewards if we continue using the same policy. Moreover, we present the reward function as a value depending on the current state, the current action, and the next state. 
+$$Q(s,a) = E[ r_t(s_t, a_t)$$
+$$+ \gamma r_{t+1}(s_{t+1}, argmax_{a_{t+1}} Q(s_{t+1}, a_{t+1}), s_{t+2})$$
+$$+ \gamma^2r_{t+2}(s_{t+2}, argmax_{a_{t+2}} Q(s_{t+1}, a_{t+2}), s_{t+3}) + … ]$$
+If we want to maximize this equation, we can transform the problem, we will look for argmax $Q$, $Q*$ (Watkins, 1989; Watkins and Dayan, 1992). This approach finds $Q*$ iteratively through a forward dynamic model.   
+$Q*(s,a) = r + \gamma max_{\alpha}[Q(s,a)]$, which is done in $\alpha$ proportion. Therefore, convergence is guaranteed with probability 1.
+
 #Functioning of the code
 This section describes the code contained in the Appendix. The code is largely based on the implementation of the [Innohead team](sites.google.com/a/innohead.com/wiki/Home/Python/reinforcement-learning---tic-tac-toe0). Though, we adjusted some parameters and added others to augment the depth of our experimental analysis. ALso we enhanced the GUI (graphical user interface).
 
@@ -45,3 +128,19 @@ http://cs229.stanford.edu/proj2009/LvDuZhai.pdf
 http://www.cc.gatech.edu/ai/robot-lab/online-publications/iros02-ebeowulf-saho-arkin.pdf
 
 http://www.readcube.com/articles/10.1038%2Fnature14236
+
+Richard Sutton and Andrew Barto (1998). Reinforcement Learning. MIT Press. ISBN 0-585-02445-6
+
+Peng Ding and Tao Mao, Reinforcement Learning in Tic-Tac-Toe Game and Its Similar Variations, Thayer School of Engineering at Dartmouth College  
+
+Sutton, Richard S. and Barto, Andrew G., Reinforcement Learning: An Introduction, MIT Press, 1998  
+
+The Reinforcement Learning Repository, University of Massachusetts, Amherst  
+
+Tesauro, Gerald, Temporal Difference Learning and TD-Gammon, Communications of the Association for Computing Machinery, March 1995 / Vol 38, No. 3  
+
+Imran Ghory, Reinforcement learning in board games, 2004   
+
+Chris Gaskett, Q-learning for Robot Control, 2002
+
+#Appendix
