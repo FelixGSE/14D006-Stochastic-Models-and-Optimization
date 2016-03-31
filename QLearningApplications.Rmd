@@ -1,31 +1,26 @@
----
-title: "TOTOTOTOTOTO"
-output: pdf_document
----
-
 #Functioning of the code
-This section describes the code contained in the Appendix. This code is largely based on the implementation of the Innohead team^[sites.google.com/a/innohead.com/wiki/Home/Python/reinforcement-learning---tic-tac-toe]. Although, we adjusted some parameters and added others to augment the depth of our experimental analysis.
+This section describes the code contained in the Appendix. This code is largely based on the implementation of the Innohead team^[sites.google.com/a/innohead.com/wiki/Home/Python/reinforcement-learning---tic-tac-toe]. Although, we adjusted some parameters and added others to augment the depth of our experimental analysis. We also enhanced the GUI.
 
-The general structure of the code is organized around classes. These are Python objects containing functions and objects that can belong to the class' environement or to the global environment.
+The general structure of the code is organized around classes. These are Python structure containing functions and objects that can belong to the class' environement or to the global environment.
 
-The class State is creating the actual game board with values as they are displayed (_, X, and O) and the corresponding values that are recognized by the learner algorithm (No Play, Player 1, Player 2). For this, it takes as input the current actions of the players to fill the table. It also contains the functions returning whether one of the players won the game and if the board is full. 
+The class State is creating the actual game board with values as they are displayed (_, X, and O) and the corresponding values that are recognized by the learner algorithm (No Play, Player 1, Player 2). For this, it takes as input the current actions of the players and fills the table accordingly. It also contains the functions returning whether one of the players won the game and one looking if the board is full. 
 
-The class Learner contains the function enumerating the possible actions left available for a player at a given state. It also contains the function evaluating the value of a particular state. In particular, the value of a win is 1, a loss is 0, and an intermediate state is 0.1. The function next_action is pivotal as it determines what will be the next move of the AI. The next move will correspond to the action which, according to past experience, has the highest value. Compared to the original code, we added the a parameter allowing for more or less randomness is this decision process. Another function will be computing the value of the previous state after evaluating the result of the last action. This corresponds to the "classical" Q-learning iteration:
+The class Learner is the most important in the code. It contains the function enumerating the possible actions left available for a player at a given state. It also contains the function evaluating the gain of a particular state. In particular, the gain of a win is 1, a loss is 0, and an intermediate state is 0.1. The function next_action is pivotal as it determines what will be the next move of the AI. The next move corresponds to the action which, according to past experience, has the highest value, a function of the gain. The latter is computed by another part of the code; more precisely, the value of the previous state is set after evaluating the result of the last action. Compared to the original code, we also added the a parameter allowing for more or less randomness is 'next action' decision process. When end-up with the standard Q-learning iteration:
 $$value(lastState) = (1-\alpha)intermediateValue(lastState) + \alpha value(newState)$$
 
-The class Game helps displaying correctly ther information for the human player. This is also where we choose to let the AI to train against itself and for how many games. This class is also in charge of recording where the players choose to play.
+The class Game is in charge of the display of the information to the human player. This is also where we choose to let the AI to train against itself and for how many games. This is also thanks to this class that we record where the players choose to play.
 
 The class Selfplay creates the oponent player and make two AIs play against each other. The aim is to prepare the AI to play (well) against a human player. We also use this class to evaluate how an AI is performing and how its sequences of actions are converging with different sets of parameters. We discuss that in the next section.
+
+While playing the game, the human user is allowed to train the AI with N games with the function g.selfplay(N). Typically after this first step, it is possible to play the game with the call g(i,j) where i is the row of a tic-tac-toe board, and j is the column.
 
 #Q-learning applications review
 
 ##Classical Q-learning
-We present similar replica of the Q-learning algorithm for the other applications in this section.
+In this section, we present similar variations of the Q-learning algorithm for other applications.
 
 ###Pacman
-The Pacman AI describes a state using a vector of features. Features are functions from states to real numbers (often 0/1) that capture important properties of the state: distance to closest ghost, distance to closest dot, number of ghosts, $1/(distance to dot)^2$, is Pacman in a tunnel? (0/1).
-
-This information is used to find which actions usually result in good outcomes, and which result in bad. So if in the current state there is a food pellet above the AI, and the AI moves up to eat the food pellet, it will remember that, in this state, moving up was a good decision because its score increased. The game is played repeatedly to build a table of memories. 
+The Pacman AI describes a state using a vector of features. These are functions from states to real numbers (often 0/1) that capture important properties of the state: distance to closest ghost, distance to closest dot, number of ghosts, $1/(distance to dot)^2$, is Pacman in a tunnel? (0/1). This information is used to find which actions usually result in good outcomes, and which result in bad. So if in the current state there is a food pellet above the AI, and the AI moves up to eat the food pellet, it will remember that, in this state, moving up was a good decision because its score increased. The game is played repeatedly to build a table of memories so the robot gets better. 
 
 ###Financial trading
 It is possible to automatically evaluate the best course of A action amoung buy, sell, and stay out. This is done from experience and without knowing the environment in advance. Here, different value functions can be optimized: internal profit, sharp  ratio,  derivative  sharp  ratio. The selection of a particular one is important to achieve a stable learning algorithm in the value iteration, especially applied when the environement is unstable. Also, learning in parallel the environment's variables variance is reported by Du et al. (2009) to lead to better performance in the algorithm than that with stationary and fixed value functions. 
