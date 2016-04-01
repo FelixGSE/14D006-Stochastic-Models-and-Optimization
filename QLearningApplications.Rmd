@@ -134,6 +134,9 @@ PLOTS
 
 The first player still performs better in general, but different first moves are distinguished. For the first player, starting in the middle (green dashed line) seems to be slightly better than any other starting point. For the second player,  states which are available after the first player started at the center are in general disadvantageous. This is not surprising since this is the winning strategy of the first player, according to our results. On the other hand, the second player also learned for example that if the first player starts at the corner it is better to play in the center (brown solid line) than to put next to the first player (green solid line).  Note that the robot trained with no randomization might performed similarly against the other robot player even if it did not have this extra information.  But when the robot has to play against a human, who does not necessarily play the optimal strategy, this information might be very useful. 
 
+PLOT
+
+With higher learning rate the values are much more volatile, and it seems that the winning rates do not stabilize in 3000 iterations. This is most likely due to the fact that when a player takes a random step a drastic increase or decrease in the value of the state might occur purely by chance. Therefore, too sensitive value estimates are observed and consequently, overall, a slower convergence.
 
 #Q-learning applications review
 
