@@ -62,7 +62,7 @@ class Learner:
         s.gamehist = []
         s.traced = False
         
-         if player == 1:
+        if player == 1:
             if alpha == None: 
                 s.alpha = 0.2 
             else: 
@@ -402,7 +402,7 @@ if __name__ == "__main__":
     print ""    
     print ""
     
-p1 = ttt.Learner(player = 1, alpha = 0.2,epsilon = 0.02)
-p2 = ttt.Learner(player = 2, alpha = 0.2,epsilon = 0.02)
+p1 = Learner(player = 1, alpha = 0.2,epsilon = 0.02)
+p2 = Learner(player = 2, alpha = 0.2,epsilon = 0.02)
 g = Game(learner = p2,other=p1)
 
