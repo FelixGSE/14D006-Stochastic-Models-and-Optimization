@@ -6,8 +6,23 @@ from numpy import diag
 import cPickle
 from pygame import mixer 
 import time
-import warnings
-warnings.filterwarnings("ignore")
+import contextlib
+import os
+import sys
+from termcolor import colored
+
+@contextlib.contextmanager
+def ignore_stderr():
+    devnull = os.open(os.devnull, os.O_WRONLY)
+    old_stderr = os.dup(2)
+    sys.stderr.flush()
+    os.dup2(devnull, 2)
+    os.close(devnull)
+    try:
+        yield
+    finally:
+        os.dup2(old_stderr, 2)
+        os.close(old_stderr)
 
 class State(numpy.ndarray):
     symbols = {0: "_", 1: "X", 2: "O"}
@@ -50,10 +65,10 @@ class Learner:
         s.hv = [] 
         if player == 1:
             s.alpha = 0.9
-            s.gamma = 0.8
+            s.gamma = 1
         else: 
             s.alpha = 0.9
-            s.gamma = 0.8
+            s.gamma = 1
        
     def enum_actions(s, state):
         #enumerate all possible actions from given state
@@ -177,9 +192,10 @@ class Game:
         s.learner.reset() 
         print sample(["WELCOME TO YOUR NIGHTMARE", "DID YOU KNOW I BEAT THE BEST NORTH KOREAN PLAYER?", "YOU CANNOT BEAT THE TICTACTOE MASTER"], 1)
         print s.state
-        mixer.init()
-        mixer.music.load('/Users/Thomas/Downloads/-loops-of-fury-by-the-chemical-brothers.mid')
-        mixer.music.play()
+        with ignore_stderr():
+            mixer.init()
+            mixer.music.load('/Users/Thomas/Downloads/-loops-of-fury-by-the-chemical-brothers.mid')
+            mixer.music.play()
 
     def __call__(s, pi,pj): 
         j = pi -1 #take the first coordinate of the previous state
@@ -193,61 +209,60 @@ class Game:
 
         if s.state.full() or s.state.won(1) or s.state.won(2):
             if s.state.won(1):
-                print '|       ::::::::::::;      |'
-                print '|      ;:.;:-%/%;;;::;     |'
-                print '|      ;%:;:;::;:;:;/:.    |'
-                print '|      :/  `%~    :\%::.   |'
-                print '|     ://\_     ___:%:::.  |'
-                print '|     | ___     ___.::%=:  |'
-                print '|     )|// |===|// | :\.;  |'
-                print '|     :\___/  |\___/ ::\;  |'
-                print '|     :    / ::     ::v:;  |'
-                print '|     `.  (_.=:.` /:.:::;  |'
-                print '|      `./  ::  \  :: :::; |'
-                print '|       (  ____     :::;;  |'
-                print '|       | [    ]  _/.|;:;; |'
-                print '|      ;:\ .~~   / .::.:;; |'
-                print '|         x---:. .::_.\    |'
-                print '|      _./ `-._.:.~   :.   |'
-                print '| _.-.~  \           ./ \. |'
-                print '|~        `-._____.-/     \|'
-                print '|                          |'
-                print '|           WINNER         |'
-                print '|__________________________|' 
+                print colored(' ___________________', 'red')
+                print colored('|                   |', 'red')
+                print colored('|  ;;;;;;;;;;;;;;;  |', 'red')
+                print colored('|  ;;    __     ;;  |', 'red')
+                print colored('|  ;        _    ;  |', 'red')
+                print colored('| n; ____\^/____,;n |', 'red')
+                print colored('| )||_//_|=|_//_||( |', 'red')
+                print colored('| .(      ;      ). |', 'red')
+                print colored('|  \   /  -  \  ./  |', 'red')
+                print colored('|  ;||` _____  ||;  |', 'red')
+                print colored('|  ;\   /---   ,/;  |', 'red')
+                print colored('|  ;; %   ^   / ;;  |', 'red')
+                print colored('|      \__|__/      |', 'red')
+                print colored('|                   |', 'red')
+                print colored('|       WINNER      |', 'red')
+                print colored('|___________________|' , 'red')
+                print ""
                 print sample(["YOU WERE LUCKY", "NEXT TIME... IT'S ME!", "HUMAN, YOU WIN..."], 1)
-                mixer.init()
-                mixer.music.load('/Users/Thomas/Downloads/mmxmavin.mid')
-                mixer.music.play()
+                print ""
+                with ignore_stderr():
+                    mixer.init()
+                    mixer.music.load('/Users/Thomas/Downloads/mmxmavin.mid')
+                    mixer.music.play()
                 time.sleep(6)
             elif s.state.won(2):
-                print '|  \\                             |'
-                print '|   \\_           __--__          |'
-                print '|    X:\        (#/  \#)         |'
-                print '|    \::\       ( |||| )         |'
-                print '|     \::\       \||||/          |'
-                print '|    /X:::\   .-./.-. \.--.      |'
-                print '|    \\/\::\ / /      (    l      |'
-                print '|     ~\ \::\ /  |    ..   L.    |'
-                print '|       \/:::|__/ \____ \..  \   |'
-                print '|       /:/\:|   |       (    \. |'
-                print '|       \/.-...  |        >    ) |'
-                print '|              \ |      //  .-/  |'
-                print '|               |      /(  ./    |'
-                print '|               \-...-/_ \  \    |'
-                print '|               __||/_ \  .-.    |'
-                print '|              / _ \ #  |        |'
-                print '|             |  #  |#  |        |'
-                print '|             |  #  |#  |        |'
-                print '|                                |'
-                print '|             WINNER             |'
-                print '|________________________________|' 
-                print sample(["I WIN HAHAHA!", "YO IS THIS GAME TOO HARD FOR YOU?", "ROBOTS WILL MAKE YOU UNEMPLOYED"], 1)
-                mixer.init()
-                mixer.music.load('/Users/Thomas/Downloads/LFMGH-111VoiceOfArk.mid')
-                mixer.music.play()
-                time.sleep(6)
+                print colored(' ______________________________', 'red')
+                print colored('| \\                            |', 'red')
+                print colored('|  \\_            _--_          |', 'red')
+                print colored('|   X:\         /#==#\         |', 'red')
+                print colored('|   \::\       ( /..\ )        |', 'red')
+                print colored('|    \::\       \||||/         |', 'red')
+                print colored('|   /X:::\   .-./.-. \.--.     |', 'red')
+                print colored('|   \\/\::\ / /      (    l     |', 'red')
+                print colored('|    ~\ \::\ /  |    ..   L.   |', 'red')
+                print colored('|      \/:::|__   ____ \..  \  |', 'red')
+                print colored('|      /:/\:|   |       (    \ |', 'red')
+                print colored('|      \/.-...  |        /   ) |', 'red')
+                print colored('|             \ |      //  ./  |', 'red')
+                print colored('|              \-...-/_ \  \   |', 'red')
+                print colored('|              __||/_ \  .-.   |', 'red')
+                print colored('|                              |', 'red')
+                print colored('|            WINNER            |', 'red')
+                print colored('|______________________________|' , 'red')
+                print ""
+                print sample(["NOW WE'RE LAUGHING", "ROBOTS WILL MAKE YOU UNEMPLOYED"], 1)
+                print ""
+                with ignore_stderr():
+                    mixer.init()
+                    mixer.music.load('/Users/Thomas/Downloads/LFMGH-111VoiceOfArk.mid')
+                    mixer.music.play()
+                time.sleep(7)
             else:
                 print "DRAW"
+                print ""
                 time.sleep(2)
             s.reset() #reset the game 
 
@@ -307,8 +322,10 @@ class Selfplay:
                 # FALSE: Update counter
                 s.i += 1
                 # In every 100th iteration print the current state
-                if s.i % 10 == 0:
-                    print s.state #hash(s.state)
+                if s.i % 100 == 0:
+                    print s.state
+                    print s.i, "TIMES STRONGER"
+                    print ""
                 # If game is not finish do the the optimised next step
                 if not s.other.traced:
                     s.other.next(s.state)
@@ -324,37 +341,44 @@ class Selfplay:
 
 if __name__ == "__main__":
     print ""
-    print'     |  ___\ \ / /_   _| ___ \  ___|  \/  ||  ___|'         
-    print'     | |__  \ V /  | | | |_/ / |__ | .  . || |__  '         
-    print'     |  __| /   \  | | |    /|  __|| |\/| ||  __| '        
-    print'     | |___/ /^\ \ | | | |\ \| |___| |  | || |___ '        
-    print'     \____/\/   \/ \_/ \_| \_\____/\_|  |_/\____/ '
-    print "                     __________"
-    print "              ______/ ________ \______"
-    print "            _/      ____________      \_"
+    print colored('      |  ___\ \ / /_   _| ___ \  ___|  \/  ||  ___|', 'red')
+    print colored('      | |__  \ V /  | | | |_/ / |__ | .  . || |__  ', 'red')
+    print colored('      |  __| /   \  | | |    /|  __|| |\/| ||  __| ', 'red')        
+    print colored('      | |___/ /^\ \ | | | |\ \| |___| |  | || |___ ', 'red')        
+    print colored('      \____/\/   \/ \_/ \_| \_\____/\_|  |_/\____/ ', 'red')
+    print "                      __________"
+    print "               ______/ ________ \______"
+    print "             _/      ____________      \_"
     print "           _/____________    ____________\_"
-    print "         /  ___________ \  / ___________  \ "
-    print "        /  /XXXXXXXXXXX\ \/ /XXXXXXXXXXX\  \ "
-    print "       /  /############/    \############\  \ "
-    print "       |  \XXXXXXXXXXX/ _  _ \XXXXXXXXXXX/  |"
-    print "     __|\_____   ___   /o  o\   ___   _____/|__"
-    print "     [_       \     \  X    X  /     /       _]"
-    print "     __|     \ \                    / /     |__"
-    print "     [____  \ \ \   ____________   / / /  ____]"
-    print "          \  \ \ \/||.||.||.||.||\/ / /  /"
-    print "           \_ \ \  ||.||.||.||.||  / / _/"
-    print "             \ \   ||.||.||.||.||   / /"
-    print "              \_   ||_||_||_||_||   _/"
-    print "                \     ........     /"
-    print "                 \________________/"
+    print "          /  ___________ \  / ___________  \ "
+    print colored("         /  /XXXXXXXXXXX\ \/ /XXXXXXXXXXX\  \ ", 'red')
+    print colored("        /  /############/    \############\  \ ", 'red')
+    print colored("        |  \XXXXXXXXXXX/ _  _ \XXXXXXXXXXX/  |", 'red')
+    print "      __|\_____   ___   /o  o\   ___   _____/|__"
+    print "      [_       \     \  X    X  /     /       _]"
+    print "      __|     \ \                    / /     |__"
+    print "      [____  \ \ \   ____________   / / /  ____]"
+    print "           \  \ \ \/||.||.||.||.||\/ / /  /"
+    print "            \_ \ \  ||.||.||.||.||  / / _/"
+    print "              \ \   ||.||.||.||.||   / /"
+    print "               \_   ||_||_||_||_||   _/"
+    print "                 \     ........     /"
+    print "                  \________________/"
     print ""
-    print'|_   _|_   _/  __ \_   _/ _ \/  __ \_   _|  _  |  ___|'
-    print'  | |   | | | /  \/ | |/ /_\ \ /  \/ | | | | | | |__  '
-    print'  | |   | | | |     | ||  _  | |     | | | | | |  __| '
-    print'  | |  _| |_| \__/\ | || | | | \__/\ | | \ \_/ / |___ '
-    print'  \_/  \___/ \____/ \_/\_| |_/\____/ \_/  \___/\____/ '
+    print colored('|_   _|_   _/  __ \ \_   _/ _ \/  __ \ \_   _|  _  |  ___|', 'red')
+    print colored('  | |   | | | /  \/   | |/ /_\ \ /  \/   | | | | | | |__  ', 'red')
+    print colored('  | |   | | | |       | ||  _  | |       | | | | | |  __| ', 'red')
+    print colored('  | |  _| |_| \__/\   | || | | | \__/\   | | \ \_/ / |___ ', 'red')
+    print colored('  \_/  \___/ \____/   \_/\_| |_/\____/   \_/  \___/\____/ ', 'red')
     print ""
+    print "              EXTREME TIC TAC TOE TM 2016"
+    print "           SMO Ledges Entertainement Group Inc."
+    print "    Do not use or share without permission, otherwise..."
+    print ""    
+    print ""    
     print "PLAY USING g(i,j), WHERE i IS A ROW AND j A COLUMN"
     print "WRITE g.selfplay(1000) TO MAKE ME 1000 TIMES STRONGER"
-    print ""
+    print ""    
+    print ""    
+
     g = Game()
