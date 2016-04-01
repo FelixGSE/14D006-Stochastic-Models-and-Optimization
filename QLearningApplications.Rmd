@@ -114,19 +114,24 @@ The class **Selfplay** creates the oponent player and make two AIs play against 
 
 While playing the game, the human user is allowed to train the AI with N games with the function g.selfplay(N), where N is a natural number. To play the game call the function g(i,j) which enable you to position your mark on the tic-tac-toe board - i is the row and j is the column.
 
-# TO BE DETERMINED
+#Parameters and learning behaviour
 
 In the following we describe the learning behaviour of the two player classes according to changes in parameters. 
+In order to study the behaviour of the algorithm we let two robot players play against each other. We observe the wining and draw rates for an increasing number of training games and for both players we record over time how the value of a few of the possible starting states evolve over time. We chose to examine the value of the starting positions for two reasons. First, these positions are reached frequently when playing the game again and again, since in the beginning of the game there are only a limited number of scenarios possible. Consequently, the values of these states are updated frequently and more likely to depict the learning behavior and success of the two players. Second, the evolution of these values well illustrates that while the agents make greedy moves - taking into account only the immediate consequence of actions - the algorithm still achieves strategies which are overall “optimal”. 
 
-In order to study the behaviour of the learning rate we let two robot players play against each other for different values of alpha. We observe the wining and draw rates for an increasing number of training games. Both player have the same learning parameter. We exclude random choices and let both players decide optimally in a greedy way. 
-
-PLOTS PLOTS PLOTS
-
-Plot XXX to YYY depict the outcome of games as a function of the number of training games. In general we can observe that the number of shares of draws is increasing for an increasing number of games. For lower learning rates the share of draw games is increasing faster. In all cases the winning share of game opening player is constantly higher, which makes sense since he has a slight advantage. Furthermore, the development for higher levels of alpha is less volatile. 
+First we examine the specification when both player have the same learning parameter. We exclude random choices and let both players decide optimally in a greedy way.
 
 PLOTS PLOTS PLOTS
 
-For the randomisation we follow basically the same procedure. We set the learning rate to 0.8 and repeat the procedure for different values of $\epsilon$. Plot ZZZ to AAA shows the development for different levels of randomisation. We can basically observe two remarkable things. For both high learning and randomisation rates, the game comes to an equilibrium fast. This could be explained that state space is explored more quickly
+Plot XXX to YYY depict the outcome of games as a function of the number of training games. In general we can observe that the number of shares of draws is increasing for an increasing number of games. For lower learning rates the share of draw games is increasing faster. Furthermore, the development for higher levels of alpha is less volatile. 
+It can be seen that the value of most of the states does not change at all for both players. With no randomization both players stuck in a given strategy (a local optimum) which leads to the outcome that the first player wins most of the times while the second player does not find the strategy to beat the first player. In all cases the winning share of game opening player is constantly higher, which makes sense since he has a slight advantage. 
+
+Now we observe what happens with different learning rates if the players make exploratory moves. We set the level of randomisation to 0.02 ( $\epsilon = 0.02$ ). We tried different levels of randomisation and this seems to be a reasonable level for the learning behaviour. The final results of the games looks quite similar as in the no radomisation case, but it can be seen that with randomisation both players explore more strategies so the values of the starting positions are constantly updated.  
+
+PLOTS
+
+The first player still performs better in general, but different first moves are distinguished  based on their success rate in case of both players. For the first player, starting in the middle (green dashed line) seems to be slightly better than any other starting point. For the second player,  states which are available after the first player started at the middle are in general disadvantageous. This is not surprising since this is the winning strategy of the first player according to our results. On the other hand, the second player also learned for example that if the first player starts at the corner it is better to put in the middle (brown solid line) than to put next to the first player (green solid line).  Note that the robot trained with no randomization might performed similarly against the other robot player but it did not have this extra information.  If the robot has to play against a human, who does not necessarily play the optimal strategy, this plus information might be very useful. 
+
 
 #Q-learning applications review
 
