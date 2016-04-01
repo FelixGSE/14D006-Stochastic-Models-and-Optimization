@@ -5,6 +5,8 @@ import numpy as np
 from numpy import diag
 import cPickle
 
+random.seed(23567)
+
 class State(numpy.ndarray):
     symbols = {0: "_", 1: "X", 2: "O"}
     
@@ -89,7 +91,7 @@ class Learner:
             #if new state is final but player did not win assign value 0
             elif state.full(): val = 0.0
             #else, game continues
-            else: val = 0.1
+            else: val = 0.0
             #assign value to the new state
             s.valuefunc[hashval] = val
         #reset state to the old value (I guess we call "value" only for possible action, 
@@ -131,7 +133,7 @@ class Learner:
         #If the other player won assign value -1
         if state.won(3-s.player):
             val = -1
-        #If the game ended assign value 0.1
+        #If the game ended assign value -0.1
         elif state.full():
             val = -0.1
         else:
@@ -206,7 +208,7 @@ class Game:
                 print "DRAW"
             s.reset() #reset the game 
 
-    def selfplay(s, n=1000):
+    def selfplay(s, n=10000):
         #selfplay for specific number of rounds
         for i in xrange(n):
             s.sp.play() 
@@ -279,10 +281,18 @@ class Selfplay:
                 if s.state.won(1): s.wining.append(1)
                 elif s.state.won(2): s.wining.append(2)
                 else: s.wining.append(0)
-                for i in [2,6,18,162]:
+                for j in [1,3,9,27,81,243,729,2187,6561]:
                     s.other.valuefunc
-                    if s.valuesave.get(i) == None: s.valuesave[i] = [s.other.valuefunc[i]]
-                    else: s.valuesave[i].append(s.other.valuefunc[i])
-                
+                    if s.valuesave.get(j) == None: s.valuesave[j] = [s.other.valuefunc[j]]
+                    else: s.valuesave[j].append(s.other.valuefunc[j])
+                for j in [7, 19, 163, 13123, 5, 165, 13125, 13203, 567]:
+                    s.learner.valuefunc
+                    if s.valuesave.get(j) == None:
+                        if s.learner.valuefunc.get(j) == None: s.valuesave[j] = [None]
+                        else: s.valuesave[j] = [s.learner.valuefunc[j]]
+                    else:
+                        if s.learner.valuefunc.get(j) == None: s.valuesave[j].append(None)
+                        else: s.valuesave[j].append(s.learner.valuefunc[j])
+    
                 break
 
