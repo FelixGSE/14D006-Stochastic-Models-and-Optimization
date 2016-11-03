@@ -2,4 +2,4 @@
 
 ## Project Content
 
-Basic study on reinforcement learning. Implementation of TIC-TAC-TOE App.
+Basic study on reinforcement learning with mplementation of RL-TIC-TAC-TOE App.
